@@ -15,7 +15,7 @@ exports.getTodo = async (req, res) => {
             });
         }
     } catch (err) {
-        console.error("Error retrieving todo:", error);
+        console.error("Error retrieving todo:", err);
         return res.status(404).json({
             status: "Error",
             message: "Failed to retrieve todo"

@@ -7,7 +7,7 @@ const todoController = require('../controller/TodoController.js')
 const router = express.Router();
 
 
-router.get('/todos', todoController.getUsers)
+router.get('/todos', todoController.getTodo)
 
 
 module.exports = router;

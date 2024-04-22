@@ -8,6 +8,7 @@ const router = express.Router();
 
 
 router.get('/todos', todoController.getTodo)
-
-
+router.post('/create', todoController.postCreate)
+router.patch('/update/:id', todoController.patchUpdate)
+router.delete('/delete/:id', todoController.deleteTodo)
 module.exports = router;

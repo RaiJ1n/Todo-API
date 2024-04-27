@@ -5,12 +5,12 @@ exports.getTodo = async (req, res) => {
         const todos = await Todo.find().exec();
         if (todos.length > 0) {
             return res.status(200).json({
-                status: "Success",
+                status: "Successfully get todo",
                 content: todos
             });
         } else {
             return res.status(204).json({
-                status: "Success",
+                status: "Failed",
                 content: "No todo found"
             });
         }

@@ -2,11 +2,16 @@ const express = require("express");
 const mongoose = require('mongoose');
 const app = express();
 const port = 4000;
-const todoRoutes = require('./routes/TodoRoutes')
+const todoRoutes = require('./routes/TodoRoutes');
+const cookieParser = require("cookie-parser");
 
 
 app.set("view engine", "ejs");
+app.use(express.urlencoded({
+    extended: true,
+}))
 app.use(express.json());
+app.use(cookieParser())
 
 app.use('/api/v1/', todoRoutes)
 

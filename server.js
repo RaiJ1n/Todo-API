@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const app = express();
 const port = 4000;
 const todoRoutes = require('./routes/TodoRoutes');
+const userRoutes = require('./routes/UserRoutes')
 const cookieParser = require("cookie-parser");
 
 
@@ -11,9 +12,10 @@ app.use(express.urlencoded({
     extended: true,
 }))
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
 
 app.use('/api/v1/', todoRoutes)
+app.use('/api/account/', userRoutes)
 
 mongoose
     .connect("mongodb://127.0.0.1:27017/tododb")

@@ -1,43 +1,34 @@
 const Todo = require('../model/Todo.Model.js');
+const User = require('../model/User.Model.js')
 
-exports.getTodo = async (req, res) => {
-    try {
-        const todos = await Todo.find().exec();
-        if (todos.length > 0) {
-            return res.status(200).json({
-                status: "Successfully get todo",
-                content: todos
-            });
-        } else {
-            return res.status(204).json({
-                status: "Failed",
-                content: "No todo found"
-            });
-        }
-    } catch (err) {
-        console.error("Error retrieving todo:", err);
-        return res.status(404).json({
-            status: "Error",
-            message: "Failed to retrieve todo"
-        });
-    }
-}
+exports.createTask = async (req, res) => {
+    console.log(req.user._id)
+    const {todo, id} = req.body
 
-exports.postCreate = async (req, res) => {
-    const { todo } = req.body;
     try {
-        const newTodo = await Todo.create({ todo });
+        const getCurrentUser = await User.findOne ({_id: req.user._id})
+        console.log(getCurrentUser);
+        const newTask = new Todo({
+            todo: todo
+        })
+        await newTask.save()
+        getCurrentUser.taskList.push(newTask)
+        await getCurrentUser.save()
         res.status(200).json({
-            status: "Successfully added",
-            content: newTodo
-        });
+            content: getCurrentUser,
+            message: "Tasked created successfully"
+        })
     } catch (err) {
         res.status(403).json({
             status: "Failed",
             content: err
         });
     }
-    console.log("New Todo created" + todo);
+}
+
+exports.getTask = async (req, res) => {
+    console.log(req.user.email)
+    
 }
 
 exports.patchUpdate = async (req, res) => {

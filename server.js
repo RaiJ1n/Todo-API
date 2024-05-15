@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/api/v1/', todoRoutes)
-app.use('/api/account/', userRoutes)
+app.use('/api/v1/', userRoutes)
 
 mongoose
     .connect("mongodb://127.0.0.1:27017/tododb")

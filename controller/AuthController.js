@@ -28,6 +28,7 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
     try {
         const checkUser = await User.findOne({ email }).exec();
+        console.log(checkUser)
         if (!checkUser) {
             return res.status(400).json({
                 message: "User not found"
@@ -40,7 +41,7 @@ exports.login = async (req, res) => {
             });
         }
 
-        const accessToken = jwt.sign({ email: checkUser.email }, "jwt", {
+        const accessToken = jwt.sign({ email: checkUser.email }, "My_Secret", {
             expiresIn: "3600s",
         });
 

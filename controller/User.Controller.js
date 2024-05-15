@@ -1,6 +1,7 @@
 const User = require("../model/User.Model")
 
 exports.getUsers = async (req, res) => {
+    console.log(req.user);
     try {
         const users = await User.find().exec()
         if (users.length > 0){

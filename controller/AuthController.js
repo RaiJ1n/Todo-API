@@ -62,3 +62,60 @@ exports.login = async (req, res) => {
         });
     }
 };
+exports.changePassword = async (req, res) => {
+    try {
+        const userid = req.params.id;
+        const user = await User.findById(userid).exec();
+        
+        console.log(req.params.id);
+
+        const newPassword = req.body.password;
+        if (!newPassword) {
+            return res.status(203).json({
+                message: "Password is required"
+            });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        const changePassword = await User.findByIdAndUpdate(
+            userid, {
+                password: hashedPassword,
+            }, {
+                runValidators: true,
+                new: true,
+            }
+        );
+
+        console.log(changePassword);
+
+        if (changePassword) {
+            return res.status(200).json({
+                status: "Successfully Changed",
+                content: changePassword
+            });
+        }
+
+        return res.status(400).json({
+            message: "User not found"
+        });
+    } catch (err) {
+        console.error("Error updating password:", err);
+        return res.status(404).json({
+            message: "Internal server error"
+        });
+    }
+};
+
+exports.logoutUser = async (req, res) => {
+    try {
+        res.clearCookie('jwt',{path:'/'}); 
+        res.status(200).json({
+            status:"Successfully logout",
+            })
+            } catch (err) {
+                res.status(400).json({
+                    status:"Error",
+                    content:err
+                })
+            }
+}

@@ -7,9 +7,9 @@ const checkUser = require('../middleware/checkUser.js')
 const router = express.Router();
 
 
-// router.get('/todos', checkUser.verifyToken, todoController.getTodo)
+router.get('/all/task', checkUser.verifyToken, todoController.getTask)
 router.post('/task', checkUser.verifyToken, todoController.createTask)
-router.patch('/update/:id', todoController.patchUpdate)
-router.delete('/delete/:id', todoController.deleteTodo)
+router.patch('/update/task/:id', checkUser.verifyToken, todoController.updateTask)
+router.delete('/delete/:id', checkUser.verifyToken, todoController.deleteTask)
 
 module.exports = router;

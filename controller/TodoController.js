@@ -2,81 +2,141 @@ const Todo = require('../model/Todo.Model.js');
 const User = require('../model/User.Model.js')
 
 exports.createTask = async (req, res) => {
-    console.log(req.user._id)
-    const {todo, id} = req.body
+    console.log(req.user.email)
+    const {todo, email} = req.body
 
     try {
-        const getCurrentUser = await User.findOne ({_id: req.user._id})
-        console.log(getCurrentUser);
+        const getCurrentUser = await User.findOne ({email: req.user.email})
+        console.log(getCurrentUser)
+
         const newTask = new Todo({
-            todo: todo
+            todo: todo,
         })
         await newTask.save()
         getCurrentUser.taskList.push(newTask)
         await getCurrentUser.save()
         res.status(200).json({
-            content: getCurrentUser,
+            content: newTask,
             message: "Tasked created successfully"
         })
     } catch (err) {
         res.status(403).json({
             status: "Failed",
-            content: err
+            content: err.message
         });
     }
 }
 
 exports.getTask = async (req, res) => {
-    console.log(req.user.email)
-    
-}
-
-exports.patchUpdate = async (req, res) => {
-    console.log(req.params.id);
-    const todoid = req.params.id;
+    console.log(req.user.email);
     try {
-        const updateTodo = await Todo.findByIdAndUpdate(
-            todoid, {
-                todo: "car wash updated",
-            }, {
+      const getAllTask = await User.findOne({ email: req.user.email })
+        .populate("taskList")
+        .exec();
+  
+      if (getAllTask.taskList.length == 0) {
+        return res.sendStatus(204);
+      }
+      res.status(200).json({
+        message:"This is your tasks",
+        content: getAllTask.taskList,
+      });
+    } catch (err) {
+      res.status(400).json({
+        content: err,
+      });
+    }
+  };
+
+  exports.updateTask = async (req, res) => {
+    const todoid = req.params.id;
+    const { todo } = req.body;
+
+    try {
+        const updateTask = await Todo.findByIdAndUpdate(
+            todoid,
+            { todo: todo },
+            {
                 runValidators: true,
                 new: true,
             }
         );
-        console.log(updateTodo);
-        if (updateTodo) {
+
+        console.log(updateTask);
+
+        if (updateTask) {
             return res.status(200).json({
                 status: "Successfully Changed",
-                content: updateTodo
+                content: updateTask,
             });
         }
-        return res.status(203).json({
-             message: "Todo not found" 
-            });
+
+        return res.status(204).json({
+            message: "Task not found",
+        });
     } catch (err) {
-        console.error("Error updating todo:", err);
-        return res.status(403).json({ 
-            message: "Internal server error" 
+        return res.status(404).json({
+            message: "Internal server error", err,
         });
     }
-}
+};
 
-exports.deleteTodo = async (req, res) => {
-    console.log(req.params.id);
-    const todoid = req.params.id
+exports.deleteTask = async (req, res) => {
+    const todoid = req.params.id;
+
     try {
-        await Todo.findOneAndDelete({
-            _id: todoid
-        })
+        const getCurrentUser = await User.findOne({ email: req.user.email });
+
+        if (!getCurrentUser) {
+            return res.status(204).json({
+                message: "User not found",
+            });
+        }
+
+        getCurrentUser.taskList = getCurrentUser.taskList.filter(
+            (taskId) => taskId.toString() !== todoid
+        );
+        
+        // await getCurrentUser.save();
+
+
+        const deletedTask = await Todo.findByIdAndDelete(todoid);
+
+        if (!deletedTask) {
+            return res.status(203).json({
+                message: "Task not found",
+            });
+        }
+
         res.status(200).json({
             status: "Successfully Deleted",
+            content: deletedTask,
         });
-        console.log("Successfully Deleted");
     } catch (err) {
-        console.log(err);
-        res.status(403).json({
-            status: "Failed to delete",
-            content: err
+        return res.status(404).json({
+            message: "Internal server error",
+            content: err.message,
         });
     }
-}
+};
+
+
+// exports.deleteTask = async (req, res) => {
+//     const todoid = req.params.id;
+//     try {
+//         const deleteTask = await Todo.findByIdAndDelete(todoid);
+//         if (deleteTask) {
+//             return res.status(200).json({
+//                 status: "Successfully Deleted",
+//                 content: deleteTask,
+//                 });
+//                 }
+//             return res.status(204).json({
+//                 message: "Task not found",
+//             })
+//             } catch (err) {
+//                 return res.status(404).json({
+//                     message: "Internal server error", err,
+//                     })
+//                     }         
+// }

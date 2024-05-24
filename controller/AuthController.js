@@ -113,9 +113,8 @@ exports.logoutUser = async (req, res) => {
             status:"Successfully logout",
             })
             } catch (err) {
-                res.status(400).json({
-                    status:"Error",
-                    content:err
+                res.status(404).json({
+                    status: err.message
                 })
             }
 }

@@ -14,7 +14,7 @@ exports.registerUser = async (req, res) => {
         await newUser.save();
         res.status(200).json({
             content: newUser,
-            message: "Success!"
+            message: "Successsfully register!"
         });
     } catch (error) {
         res.status(400).json({

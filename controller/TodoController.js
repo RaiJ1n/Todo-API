@@ -97,7 +97,7 @@ exports.deleteTask = async (req, res) => {
             (taskId) => taskId.toString() !== todoid
         );
         
-        // await getCurrentUser.save();
+        
 
 
         const deletedTask = await Todo.findByIdAndDelete(todoid);
@@ -121,22 +121,3 @@ exports.deleteTask = async (req, res) => {
 };
 
 
-// exports.deleteTask = async (req, res) => {
-//     const todoid = req.params.id;
-//     try {
-//         const deleteTask = await Todo.findByIdAndDelete(todoid);
-//         if (deleteTask) {
-//             return res.status(200).json({
-//                 status: "Successfully Deleted",
-//                 content: deleteTask,
-//                 });
-//                 }
-//             return res.status(204).json({
-//                 message: "Task not found",
-//             })
-//             } catch (err) {
-//                 return res.status(404).json({
-//                     message: "Internal server error", err,
-//                     })
-//                     }         
-// }
